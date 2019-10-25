@@ -71,3 +71,16 @@ class Animation:
             edit=True, absolute=True,
             inWeight=weight, inAngle=angle
         )
+
+    @classmethod
+    def ghost_keyframes(cls, keyframes):
+        maya.mel.eval("unGhostAll")
+        for o in Selection.get():
+            obj_for_ghosting = o
+            obj_is_transform = maya.cmds.objectType(o) == 'transform'
+            if obj_is_transform: # Change the object to the shape if this is a transform
+                obj_for_ghosting = maya.cmds.listRelatives(o, shapes=True)[0]
+            maya.cmds.setAttr("%s.ghosting" % obj_for_ghosting, 1)
+            maya.cmds.setAttr("%s.ghostingControl" % obj_for_ghosting, 1)
+            maya.cmds.setAttr("%s.ghostFrames" % obj_for_ghosting, keyframes, type="Int32Array")
+
