@@ -1,6 +1,8 @@
 import maya
 
 
+from maya_selection import Selection
+
 class Animation:
 
     @classmethod
