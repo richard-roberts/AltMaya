@@ -8,6 +8,11 @@ from .maya_timeline import *
 from .maya_mesh import *
 
 
+
+
+
+
+
 import maya
 
 class ObjectIndex:
@@ -26,7 +31,8 @@ import maya
 class Vertex:
     
     def __str__(self):
-        return "Vertex[%d,(%2.2f, %2.2f, )]"
+        x, y, z = self.xyz()
+        return "Vertex[%d,(%2.2f %2.2f %2.2f)]" % (self.index, x, y, z)
     
     def __init__(self, m_mesh, index):
         self.m_mesh = m_mesh
@@ -59,4 +65,5 @@ class Mesh:
         
         
 m = Mesh("pSphere1")
-m.vertices
+for v in m.vertices:
+    print(v)
