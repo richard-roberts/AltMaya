@@ -26,6 +26,17 @@ class Selection:
     @classmethod
     def first(cls):
         if cls.is_empty():
-            return None
+            raise ValueError("selection is empty")
         else:
             return cls.get()[0]
+            
+    @classmethod
+    def second(cls):
+        if cls.is_empty():
+            raise ValueError("selection is empty")
+        else:
+            sel = cls.get()
+            if len(sel) < 2:
+                raise ValueError("selection has less than two elements")
+            else:
+                return sel[1]
