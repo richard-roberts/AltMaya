@@ -35,8 +35,11 @@ class Vertex:
         ])
         
     def set_by_xyz(self, x, y, z):
-        m = maya.OpenMaya.MPoint(x, y, z)
-        self.m_mesh.setPoint(self.index, m, self.query_space)
+        self.p.x = x
+        self.p.y = y
+        self.p.z = z
+        # m = maya.OpenMaya.MPoint(x, y, z)
+        self.m_mesh.setPoint(self.index, self.p, self.query_space)
         
     def set_by_array(self, array):
         x = array[0]
