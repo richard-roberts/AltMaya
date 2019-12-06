@@ -1,6 +1,10 @@
 import maya
 
 class Functions:
+
+    @classmethod
+    def delete(cls, obj):
+        maya.cmds.delete(obj)
     
     @classmethod
     def duplicate(cls, obj, name=""):
