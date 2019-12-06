@@ -3,6 +3,7 @@ import time
 import maya
 import numpy
 
+import AltMaya as alt_maya
 
 class Vertex:
     
@@ -138,9 +139,9 @@ class Mesh:
         return Mesh(self.name, existing=self, verbose=verbose)
         
     def setup_from_existing(self, name, existing, verbose):
-        self.name = Functions.duplicate(existing.name)
-        self.m_mesh = maya.OpenMaya.MFnMesh(ObjectIndex.get_path_from_name(self.name))
-        self.adjaceny = existing.adjaceny
+        self.name = alt_maya.Functions.duplicate(existing.name)
+        self.m_mesh = maya.OpenMaya.MFnMesh(alt_maya.ObjectIndex.get_path_from_name(self.name))
+        self.triangle_adjaceny_map = existing.triangle_adjaceny_map
         
         if verbose: s = time.time()
         self.vertices = [
@@ -170,15 +171,7 @@ class Mesh:
         
     def setup_from_maya(self, name, verbose):        
         self.name = name
-        self.m_mesh = maya.OpenMaya.MFnMesh(ObjectIndex.get_path_from_name(name))
-        
-        s = 0
-        e = 0
-        
-        if verbose: s = time.time()
-        self.adjaceny = self.compile_face_adjaceny_map(name)
-        if verbose: e = time.time()
-        if verbose: print("Adj map init took %2.2fs" % (e-s))
+        self.m_mesh = maya.OpenMaya.MFnMesh(alt_maya.ObjectIndex.get_path_from_name(name))
         
         if verbose: s = time.time()
         self.vertices = [
@@ -204,6 +197,11 @@ class Mesh:
             self.triangles.append(t)
         if verbose: e = time.time()
         if verbose: print("Triangles init took %2.2fs" % (e-s))        
+
+        if verbose: s = time.time()
+        self.triangle_adjaceny_map = self.compile_face_adjaceny_map(name)
+        if verbose: e = time.time()
+        if verbose: print("Adj map init took %2.2fs" % (e-s))
         
     def get_nearest_valid_point_fast(self, x, y, z):
         # maya.cmds.warning("Not using normal check for valid point (only distance)")
