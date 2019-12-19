@@ -101,6 +101,7 @@ class Triangle:
         v4 = cp / numpy.linalg.norm(cp)
         self.simplex = numpy.matrix(numpy.hstack([v2v1, v3v1, v4.T]))
 
+
 class Mesh:
     
     @classmethod

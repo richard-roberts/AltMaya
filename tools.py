@@ -13,7 +13,7 @@ class AttributeSelector(StandardMayaWindow):
     TICK_COLUMN_SIZE = 50
     ROW_SIZE = 50
     
-    def __init__(self, title, preselected_attr_indices, parent=None):
+    def __init__(self, title="Attribute Selector", preselected_attr_indices=[], parent=None):
         super(AttributeSelector, self).__init__(title, parent=parent)
         
         self.object_list = []

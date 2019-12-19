@@ -1,7 +1,6 @@
 import maya
 
-
-from maya_selection import Selection
+from AltMaya.maya_selection import Selection
 
 class Animation:
 
@@ -86,3 +85,69 @@ class Animation:
             maya.cmds.setAttr("%s.ghostingControl" % obj_for_ghosting, 1)
             maya.cmds.setAttr("%s.ghostFrames" % obj_for_ghosting, keyframes, type="Int32Array")
 
+
+class AnimationCurve:
+    
+    def __init__(self, attribute_index):
+        self.attribute_index = attribute_index
+        self.cached_start = None
+        self.cached_end = None
+        self.cached_times = None
+        self.cached_values = None
+        self.cached_out_weights = None
+        self.cached_in_weights = None
+        self.cached_out_angles = None
+        self.cached_in_angles = None
+        self.cached_out_types = None
+        self.cached_in_types = None
+
+    def cache(self, start, end):
+        if not Animation.is_attribute_animated(self.attribute_index):
+            Report.error(str(self.attribute_index) + " is not animated")
+            return
+        key = str(self.attribute_index)
+        s = start
+        e = end
+        self.cached_start = s
+        self.cached_end = e
+        self.cached_times = maya.cmds.keyframe(key, query=True, time=(s, e)) or []
+        self.cached_values = [maya.cmds.keyframe(key, eval=True, time=(t, t), query=True)[0] for t in self.cached_times]
+        self.cached_out_weights = maya.cmds.keyTangent(key, query=True, time=(s, e), outWeight=True) or []
+        self.cached_in_weights = maya.cmds.keyTangent(key, query=True, time=(s, e), inWeight=True) or []
+        self.cached_out_angles = maya.cmds.keyTangent(key, query=True, time=(s, e), outAngle=True) or []
+        self.cached_in_angles = maya.cmds.keyTangent(key, query=True, time=(s, e), inAngle=True) or []
+        self.cached_out_types = maya.cmds.keyTangent(key, query=True, time=(s, e), outTangentType=True) or []
+        self.cached_in_types = maya.cmds.keyTangent(key, query=True, time=(s, e), inTangentType=True) or []
+    
+    def revert(self):
+        if self.cached_times is None:
+            Report.error("The cache has not yet been set")
+            return
+            
+        key = str(self.attribute_index)
+        s = self.cached_start
+        e = self.cached_end
+        
+        # Delete what is there now
+        maya.cmds.cutKey(key, time=(s, e))
+        
+        # Rebuild key by key
+        for (time, value, out_weight, in_weight, out_angle, in_angle, out_type, in_type) in zip(
+            self.cached_times,
+            self.cached_values,
+            self.cached_out_weights,
+            self.cached_in_weights,
+            self.cached_out_angles,
+            self.cached_in_angles,
+            self.cached_out_types,
+            self.cached_in_types
+        ):
+            t = time
+            maya.cmds.setKeyframe(key, time=(t, t), value=value)
+            maya.cmds.keyTangent(
+                key, time=(t, t),
+                edit=True, absolute=True,
+                outWeight=out_weight, inWeight=in_weight,
+                outAngle=out_angle, inAngle=in_angle,
+                outTangentType=out_type, inTangentType=in_type
+            )
