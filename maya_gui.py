@@ -26,3 +26,41 @@ class StandardMayaWindow(QtWidgets.QDialog):
         # Note sure what this does
         if maya.cmds.about(macOS=True):
             self.setWindowFlags(QtCore.Qt.Tool)
+
+
+class Ask:
+
+    @classmethod
+    def string(cls, parent, title, description, default_value):
+        text, ok = QtWidgets.QInputDialog.getText(parent, title, description, text=default_value)
+        if ok:
+            return str(text)
+        else:
+            return ""
+            
+    @classmethod
+    def decision(cls, parent, title, description):
+        msgBox = QtWidgets.QMessageBox()
+        msgBox.setText(title)
+        msgBox.setInformativeText(description)
+        msgBox.setStandardButtons(QtWidgets.QMessageBox.No | QtWidgets.QMessageBox.Yes)
+        # msgBox.setDefaultButton(QMessageBox.Save)
+        ret = msgBox.exec_()
+        if ret == QtWidgets.QMessageBox.No:
+            return False
+        elif ret == QtWidgets.QMessageBox.Yes:
+            return True
+        else:
+            raise ValueError("Response `%s` not understood" % (str(ret)))
+            
+    @classmethod
+    def choose_file_to_open_json(cls, parent, title):
+        dialog = QtWidgets.QFileDialog()
+        filepath, selected_filter = dialog.getOpenFileName(parent, title, filter="JSON files (*.json);; All Files (*.*)")
+        return filepath
+
+    @classmethod
+    def choose_file_to_save_json(cls, parent, title):
+        dialog = QtWidgets.QFileDialog()
+        filepath, selected_filter = dialog.getSaveFileName(parent, title, filter="JSON files (*.json);; All Files (*.*)")
+        return filepath
