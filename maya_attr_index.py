@@ -8,6 +8,11 @@ class AttributeIndex:
         self.attr = attribute_name
         self.key = "%s.%s" % (self.obj, self.attr)
     
+    @staticmethod
+    def from_key(key):
+        node_name, attr_name = key.split(".")
+        return AttributeIndex(node_name, attr_name)
+        
     def __str__(self):
         return self.key
         
@@ -17,6 +22,9 @@ class AttributeIndex:
     def read_at_time(self, time):
         return maya.cmds.getAttr(self.key, time=time)
         
+    def set(self, value):
+        return maya.cmds.setAttr(self.key, value)
+                
     def exists(self):
         return maya.cmds.objExists(self.key)
     
