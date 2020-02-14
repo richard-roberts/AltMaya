@@ -53,7 +53,7 @@ class AttributeChangeCallback:
     @staticmethod
     def clear():
         for key in AttributeChangeCallback.jobs.keys():
-            job_ids = om.MCallbackIdArray()
+            job_ids = maya.OpenMaya.MCallbackIdArray()
             m_object = altmaya.API.get_mobject(key)
             maya.OpenMaya.MNodeMessage.nodeCallbacks(m_object, job_ids)
             maya.OpenMaya.MNodeMessage.removeCallbacks(job_ids)
