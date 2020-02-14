@@ -44,6 +44,13 @@ class AttributeChangeCallback:
         return name in AttributeChangeCallback.jobs.keys()
 
     @staticmethod
+    def kill_for_index(attribute_index):
+        name = attribute_index.obj
+        job = AttributeChangeCallback.jobs[name]
+        maya.OpenMaya.MMessage.removeCallback(job)
+        del AttributeChangeCallback.jobs[name]
+
+    @staticmethod
     def clear():
         for key in AttributeChangeCallback.jobs.keys():
             job_ids = om.MCallbackIdArray()
