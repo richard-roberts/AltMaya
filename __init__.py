@@ -9,6 +9,7 @@ import maya_plugins
 import maya_reporting 
 import maya_selection 
 import maya_timeline 
+import maya_callbacks
 import maya_api
 
 reload(maya_animation)
@@ -22,6 +23,7 @@ reload(maya_plugins)
 reload(maya_reporting)
 reload(maya_selection)
 reload(maya_timeline)
+reload(maya_callbacks)
 reload(maya_api)
 
 Animation = maya_animation.Animation
@@ -39,4 +41,6 @@ Plugins = maya_plugins.Plugins
 Report = maya_reporting.Report
 Selection = maya_selection.Selection
 Timeline = maya_timeline.Timeline
+IdleCallback = maya_callbacks.IdleCallback
+AttributeChangeCallback = maya_callbacks.AttributeChangeCallback
 API = maya_api.API
