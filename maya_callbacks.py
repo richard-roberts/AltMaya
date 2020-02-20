@@ -22,6 +22,17 @@ class IdleCallback:
             maya.cmds.scriptJob(kill=cid)
         IdleCallback.ids = []
 
+
+class TimelineChangeCallback:
+
+    def __init__(self, callback):
+        self.callback = callback
+        self.id = maya.OpenMaya.MEventMessage.addEventCallback("timeChanged", callback)
+
+    def kill(self):
+        maya.OpenMaya.MEventMessage.removeCallback(self.id)
+
+
 class AttributeChangeCallback:
 
     jobs = {}

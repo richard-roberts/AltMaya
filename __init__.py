@@ -42,5 +42,6 @@ Report = maya_reporting.Report
 Selection = maya_selection.Selection
 Timeline = maya_timeline.Timeline
 IdleCallback = maya_callbacks.IdleCallback
+TimelineChangeCallback = maya_callbacks.TimelineChangeCallback
 AttributeChangeCallback = maya_callbacks.AttributeChangeCallback
 API = maya_api.API
