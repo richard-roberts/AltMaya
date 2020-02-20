@@ -4,6 +4,10 @@ import maya
 class Timeline:
     
     @classmethod
+    def get_current_frame(cls):
+        return maya.cmds.currentTime(query=True)
+    
+    @classmethod
     def get_start(cls):
         return maya.cmds.playbackOptions(query=True, minTime=True)
     
