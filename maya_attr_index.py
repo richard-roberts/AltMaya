@@ -24,6 +24,9 @@ class AttributeIndex:
         
     def set(self, value):
         return maya.cmds.setAttr(self.key, value)
+        
+    def set_at_time(self, time, value):
+        maya.cmds.setKeyframe(self.key, time=time, value=value)
                 
     def exists(self):
         return maya.cmds.objExists(self.key)
