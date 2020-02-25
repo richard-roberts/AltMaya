@@ -7,6 +7,15 @@ class AttributeIndex:
         self.obj = node_name
         self.attr = attribute_name
         self.key = "%s.%s" % (self.obj, self.attr)
+        
+    @classmethod
+    def enumerate_selected(cls):
+        attrs = []
+        for o in maya.cmds.ls(selection=True):
+            for a in maya.cmds.listAttr(o, keyable=True):
+                attr = AttributeIndex(o, a)
+                attrs.append(attr)
+        return attrs
     
     @staticmethod
     def from_key(key):
