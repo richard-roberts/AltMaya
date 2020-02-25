@@ -54,10 +54,18 @@ class Ask:
             raise ValueError("Response `%s` not understood" % (str(ret)))
             
     @classmethod
-    def choose_file_to_open_json(cls, parent, title):
+    def choose_file_to_open(cls, parent, title, files_filter):
         dialog = QtWidgets.QFileDialog()
-        filepath, selected_filter = dialog.getOpenFileName(parent, title, filter="JSON files (*.json);; All Files (*.*)")
+        filepath, selected_filter = dialog.getOpenFileName(parent, title, filter=files_filter)
         return filepath
+
+    @classmethod
+    def choose_file_to_open_csv(cls, parent, title):
+        return cls.choose_file_to_open(parent, title, "CSV files (*.csv);; All Files (*.*)")
+            
+    @classmethod
+    def choose_file_to_open_json(cls, parent, title):
+        return cls.choose_file_to_open(parent, title, "JSON files (*.json);; All Files (*.*)")
 
     @classmethod
     def choose_file_to_save_json(cls, parent, title):
