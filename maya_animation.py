@@ -11,6 +11,11 @@ class Animation:
     @classmethod
     def add_keyframe(cls, attribute_index, time, value):
         maya.cmds.setKeyframe(attribute_index.key, time=time, value=value)
+        
+    @classmethod
+    def add_keyframes(cls, attribute_index, times, values):
+        for (time, value) in zip(times, values):
+            cls.add_keyframe(attribute_index, time, value)
     
     @classmethod
     def list_frames_that_have_keyframes(cls, attribute_index):
