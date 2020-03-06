@@ -17,7 +17,7 @@ class Vertex:
             self.setup_from_maya()
         else:
             self.setup_from_existing(existing)
-            
+           
         self.starting_p = maya.OpenMaya.MPoint(self.p.x, self.p.y, self.p.z)
         self.delta_p = self.read_delta()
         
@@ -34,6 +34,9 @@ class Vertex:
             [self.p.y], 
             [self.p.z]
         ])
+        
+    def reset(self):
+        self.m_mesh.setPoint(self.index, self.starting_p, self.query_space)
         
     def set_by_xyz(self, x, y, z):
         self.p.x = x
@@ -211,6 +214,12 @@ class Mesh:
         self.m_mesh.getClosestPoint(query, nearest, maya.OpenMaya.MSpace.kWorld)
         return nearest.x, nearest.y, nearest.z
     
+    def reset(self, verbose=False):
+        if verbose: s = time.time()
+        for v in self.vertices: v.reset()
+        if verbose: e = time.time()
+        if verbose: print("Triangles update took %2.2fs" % (e-s))
+        
     def update(self, verbose=False):
         if verbose: s = time.time()
         for t in self.triangles: t.update()
