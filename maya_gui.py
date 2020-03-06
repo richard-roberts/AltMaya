@@ -52,7 +52,13 @@ class Ask:
             return True
         else:
             raise ValueError("Response `%s` not understood" % (str(ret)))
-            
+    
+    @classmethod
+    def choose_folder(cls, parent, title):
+        dialog = QtWidgets.QFileDialog()
+        folder = dialog.getExistingDirectory(parent, title)
+        return folder
+                
     @classmethod
     def choose_file_to_open(cls, parent, title, files_filter):
         dialog = QtWidgets.QFileDialog()
