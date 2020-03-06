@@ -6,6 +6,10 @@ class Timeline:
     @classmethod
     def get_current_frame(cls):
         return maya.cmds.currentTime(query=True)
+        
+    @classmethod
+    def set_current_frame(cls, time):
+        return maya.cmds.currentTime(time)
     
     @classmethod
     def get_start(cls):
