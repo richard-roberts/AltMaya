@@ -34,6 +34,7 @@ AttributeIndex = maya_attr_index.AttributeIndex
 Functions = maya_functions.Functions
 StandardMayaWindow = maya_gui.StandardMayaWindow
 Ask = maya_gui.Ask
+Info = maya_gui.Info
 History = maya_history.History
 Vertex = maya_mesh.Vertex
 Triangle = maya_mesh.Triangle

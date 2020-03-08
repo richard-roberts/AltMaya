@@ -78,3 +78,13 @@ class Ask:
         dialog = QtWidgets.QFileDialog()
         filepath, selected_filter = dialog.getSaveFileName(parent, title, filter="JSON files (*.json);; All Files (*.*)")
         return filepath
+
+
+class Info:
+
+    @classmethod
+    def show(self, title, message):
+        box = QtWidgets.QMessageBox()
+        box.setWindowTitle(title)
+        box.setText(message)
+        box.exec_()
