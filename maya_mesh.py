@@ -225,3 +225,21 @@ class Mesh:
         for t in self.triangles: t.update()
         if verbose: e = time.time()
         if verbose: print("Triangles update took %2.2fs" % (e-s))
+
+
+class VertexList:
+
+    def __init__(self, name):
+        self.name = name
+        self.m_mesh = maya.OpenMaya.MFnMesh(alt_maya.ObjectIndex.get_path_from_name(name))
+        self.vertices = [
+            Vertex(self.m_mesh, i)
+            for i in range(self.m_mesh.numVertices())
+        ]
+
+    def set_positions(self, xyzs):
+        for i in range(len(xyzs)):
+            x = xyzs[i, 0]
+            y = xyzs[i, 1]
+            z = xyzs[i, 2]
+            self.vertices[i].set_by_xyz(x, y, z)

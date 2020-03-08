@@ -38,6 +38,7 @@ History = maya_history.History
 Vertex = maya_mesh.Vertex
 Triangle = maya_mesh.Triangle
 Mesh = maya_mesh.Mesh
+VertexList = maya_mesh.VertexList
 ObjectIndex = maya_object_index.ObjectIndex
 Plugins = maya_plugins.Plugins
 Report = maya_reporting.Report
