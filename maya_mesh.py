@@ -5,9 +5,12 @@ import numpy
 
 import AltMaya as alt_maya
 
+
+query_space = maya.OpenMaya.MSpace.kObject
+
+
 class Vertex:
     
-    query_space = maya.OpenMaya.MSpace.kWorld
     
     def __init__(self, parent, m_mesh, index, existing=None):
         self.parent = parent
@@ -24,7 +27,7 @@ class Vertex:
         
     def setup_from_maya(self):
         self.p = maya.OpenMaya.MPoint()
-        self.m_mesh.getPoint(self.index, self.p, self.query_space)
+        self.m_mesh.getPoint(self.index, self.p, query_space)
         
     def setup_from_existing(self, existing):
         self.p = maya.OpenMaya.MPoint(existing.p.x, existing.p.y, existing.p.z)
@@ -37,14 +40,14 @@ class Vertex:
         ])
         
     def reset(self):
-        self.m_mesh.setPoint(self.index, self.starting_p, self.query_space)
+        self.m_mesh.setPoint(self.index, self.starting_p, query_space)
         
     def set_by_xyz(self, x, y, z):
         self.p.x = x
         self.p.y = y
         self.p.z = z
         # m = maya.OpenMaya.MPoint(x, y, z)
-        self.m_mesh.setPoint(self.index, self.p, self.query_space)
+        self.m_mesh.setPoint(self.index, self.p, query_space)
         
     def set_by_array(self, array):
         x = array[0]
@@ -215,7 +218,7 @@ class Mesh:
         # maya.cmds.warning("Not using normal check for valid point (only distance)")
         query = maya.OpenMaya.MPoint(x, y, z)
         nearest = maya.OpenMaya.MPoint()
-        self.m_mesh.getClosestPoint(query, nearest, maya.OpenMaya.MSpace.kWorld)
+        self.m_mesh.getClosestPoint(query, nearest, query_space)
         return nearest.x, nearest.y, nearest.z
     
     def reset(self, verbose=False):
