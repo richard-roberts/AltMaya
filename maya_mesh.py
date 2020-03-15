@@ -9,7 +9,8 @@ class Vertex:
     
     query_space = maya.OpenMaya.MSpace.kWorld
     
-    def __init__(self, m_mesh, index, existing=None):
+    def __init__(self, parent, m_mesh, index, existing=None):
+        self.parent = parent
         self.m_mesh = m_mesh
         self.index = index
         
@@ -70,7 +71,8 @@ class Vertex:
 
 class Triangle:
     
-    def __init__(self, m_mesh, v1, v2, v3, existing=None):
+    def __init__(self, parent, m_mesh, v1, v2, v3, existing=None):
+        self.parent = parent
         self.m_mesh = m_mesh
         self.v1 = v1
         self.v2 = v2
@@ -149,7 +151,7 @@ class Mesh:
         
         if verbose: s = time.time()
         self.vertices = [
-            Vertex(self.m_mesh, i, existing=existing.vertices[i])
+            Vertex(self, self.m_mesh, i, existing=existing.vertices[i])
             for i in range(self.m_mesh.numVertices())
         ]
         if verbose: e = time.time()
@@ -163,6 +165,7 @@ class Mesh:
             if len(inds) != 3:
                 raise ValueError("Can only process triangle meshes for now, sorry")
             t = Triangle(
+                self,
                 self.m_mesh,
                 self.vertices[inds[0]],
                 self.vertices[inds[1]],
@@ -179,7 +182,7 @@ class Mesh:
         
         if verbose: s = time.time()
         self.vertices = [
-            Vertex(self.m_mesh, i)
+            Vertex(self, self.m_mesh, i)
             for i in range(self.m_mesh.numVertices())
         ]
         if verbose: e = time.time()
@@ -193,6 +196,7 @@ class Mesh:
             if len(inds) != 3:
                 raise ValueError("Can only process triangle meshes for now, sorry")
             t = Triangle(
+                self,
                 self.m_mesh,
                 self.vertices[inds[0]],
                 self.vertices[inds[1]],
@@ -233,7 +237,7 @@ class VertexList:
         self.name = name
         self.m_mesh = maya.OpenMaya.MFnMesh(alt_maya.ObjectIndex.get_path_from_name(name))
         self.vertices = [
-            Vertex(self.m_mesh, i)
+            Vertex(self, self.m_mesh, i)
             for i in range(self.m_mesh.numVertices())
         ]
 
