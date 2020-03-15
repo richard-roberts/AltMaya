@@ -220,6 +220,15 @@ class Mesh:
         nearest = maya.OpenMaya.MPoint()
         self.m_mesh.getClosestPoint(query, nearest, query_space)
         return nearest.x, nearest.y, nearest.z
+        
+    def get_index_of_triangle_nearest_to_point(self, x, y, z):
+        query = maya.OpenMaya.MPoint(x, y, z)
+        p = maya.OpenMaya.MPoint()
+        ix = maya.OpenMaya.MScriptUtil().asIntPtr()
+        self.m_mesh.getClosestPoint(query, p, query_space, ix)
+        nearest_ix = maya.OpenMaya.MScriptUtil(ix).asInt()
+        # return self.triangles[nearest_ix]
+        return nearest_ix
     
     def reset(self, verbose=False):
         if verbose: s = time.time()
