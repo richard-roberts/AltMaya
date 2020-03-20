@@ -262,7 +262,7 @@ class VertexList:
 
     def set_positions(self, xyzs):
         for i in range(len(xyzs)):
-            x = xyzs[i, 0]
-            y = xyzs[i, 1]
-            z = xyzs[i, 2]
+            x = xyzs[i][0]
+            y = xyzs[i][1]
+            z = xyzs[i][2]
             self.vertices[i].set_by_xyz(x, y, z)
