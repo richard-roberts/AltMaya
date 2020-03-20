@@ -7,6 +7,9 @@ class ObjectIndex:
     def get_path_from_name(cls, name):
         sel = maya.OpenMaya.MSelectionList()
         path = maya.OpenMaya.MDagPath()
-        sel.add(name)
+        try:
+            sel.add(name)
+        except:
+            raise ValueError("Name %s not exist" % name)
         sel.getDagPath(0, path)
         return path
