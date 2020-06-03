@@ -3,8 +3,7 @@ import time
 import maya
 import numpy
 
-import AltMaya as alt_maya
-
+from  maya_selection import Selection
 
 query_space = maya.OpenMaya.MSpace.kObject
 
@@ -114,7 +113,7 @@ class Triangle:
         return "%s.f[%d]" % (self.parent.name, index)
         
     def select(self):
-        alt_maya.Selection.set([self.as_key()])
+        Selection.set([self.as_key()])
 
 
 class Mesh:

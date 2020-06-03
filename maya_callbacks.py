@@ -1,7 +1,6 @@
 import maya
 
-import AltMaya as altmaya
-
+from maya_api import API
 
 class IdleCallback:
 
@@ -40,7 +39,7 @@ class AttributeChangeCallback:
     def __init__(self, attribute_index, callback):
         self.name = attribute_index.obj
         self.callback = callback
-        m_object = altmaya.API.get_mobject(self.name)
+        m_object = API.get_mobject(self.name)
         job = maya.OpenMaya.MNodeMessage.addAttributeChangedCallback(m_object, self.callback)
         AttributeChangeCallback.jobs[self.name] = job
 
@@ -65,7 +64,7 @@ class AttributeChangeCallback:
     def clear():
         for key in AttributeChangeCallback.jobs.keys():
             job_ids = maya.OpenMaya.MCallbackIdArray()
-            m_object = altmaya.API.get_mobject(key)
+            m_object = API.get_mobject(key)
             maya.OpenMaya.MNodeMessage.nodeCallbacks(m_object, job_ids)
             maya.OpenMaya.MNodeMessage.removeCallbacks(job_ids)
             # job = AttributeChangeCallback.jobs[key]

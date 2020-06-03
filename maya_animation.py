@@ -1,6 +1,6 @@
 import maya
 
-from AltMaya.maya_selection import Selection
+from maya_selection import Selection
 
 class Animation:
 
