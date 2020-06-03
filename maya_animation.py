@@ -9,13 +9,13 @@ class Animation:
         maya.cmds.cutKey(attribute_index.key, time=(start, end))
 
     @classmethod
-    def add_keyframe(cls, attribute_index, time, value):
-        maya.cmds.setKeyframe(attribute_index.key, time=time, value=value)
+    def add_keyframe(cls, attribute_index, time, value, is_breakdown):
+        maya.cmds.setKeyframe(attribute_index.key, time=time, value=value, breakdown=is_breakdown)
         
     @classmethod
-    def add_keyframes(cls, attribute_index, times, values):
+    def add_keyframes(cls, attribute_index, times, values, are_breakdowns):
         for (time, value) in zip(times, values):
-            cls.add_keyframe(attribute_index, time, value)
+            cls.add_keyframe(attribute_index, time, value, are_breakdowns)
     
     @classmethod
     def list_frames_that_have_keyframes(cls, attribute_index):
