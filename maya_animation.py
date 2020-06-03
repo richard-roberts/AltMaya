@@ -77,10 +77,14 @@ class Animation:
             edit=True, absolute=True,
             inWeight=weight, inAngle=angle
         )
-
+    
+    @classmethod
+    def clear_ghosts(cls):
+        maya.mel.eval("unGhostAll")
+        
     @classmethod
     def ghost_keyframes(cls, keyframes):
-        maya.mel.eval("unGhostAll")
+        cls.clear_ghosts()
         for o in Selection.get():
             obj_for_ghosting = o
             obj_is_transform = maya.cmds.objectType(o) == 'transform'
