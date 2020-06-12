@@ -8,10 +8,8 @@ class Functions:
     
     @classmethod
     def duplicate(cls, obj, name=""):
-        ret = maya.cmds.duplicate(obj)
-        copied = ret[0]
-        if name != "":
-            maya.cmds.rename(copied, name)
-            return name
+        if name:
+            ret = maya.cmds.duplicate(obj, name=name)
         else:
-            return copied
+            ret = maya.cmds.duplicate(obj)
+        return ret[0]
