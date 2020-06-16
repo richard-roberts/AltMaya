@@ -78,6 +78,12 @@ class Ask:
         dialog = QtWidgets.QFileDialog()
         filepath, selected_filter = dialog.getSaveFileName(parent, title, filter="JSON files (*.json);; All Files (*.*)")
         return filepath
+        
+    @classmethod
+    def choose_file_to_save_xml(cls, parent, title):
+        dialog = QtWidgets.QFileDialog()
+        filepath, selected_filter = dialog.getSaveFileName(parent, title, filter="XML files (*.xml);; All Files (*.*)")
+        return filepath
 
 
 class Info:
