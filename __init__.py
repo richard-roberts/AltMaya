@@ -10,6 +10,7 @@ import maya_reporting
 import maya_selection 
 import maya_shader
 import maya_timeline 
+import maya_types
 import maya_callbacks
 import maya_api
 
@@ -25,6 +26,7 @@ reload(maya_reporting)
 reload(maya_selection)
 reload(maya_shader)
 reload(maya_timeline)
+reload(maya_types)
 reload(maya_callbacks)
 reload(maya_api)
 
@@ -48,5 +50,6 @@ Shaders = maya_shader.Shaders
 Timeline = maya_timeline.Timeline
 IdleCallback = maya_callbacks.IdleCallback
 TimelineChangeCallback = maya_callbacks.TimelineChangeCallback
+Types = maya_types.Types
 AttributeChangeCallback = maya_callbacks.AttributeChangeCallback
 API = maya_api.API
