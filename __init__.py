@@ -1,5 +1,6 @@
 import maya_animation 
 import maya_attr_index 
+import maya_blendshapes 
 import maya_functions 
 import maya_gui 
 import maya_history 
@@ -16,6 +17,7 @@ import maya_api
 
 reload(maya_animation)
 reload(maya_attr_index)
+reload(maya_blendshapes)
 reload(maya_functions)
 reload(maya_gui)
 reload(maya_history)
@@ -33,6 +35,7 @@ reload(maya_api)
 Animation = maya_animation.Animation
 AnimationCurve = maya_animation.AnimationCurve
 AttributeIndex = maya_attr_index.AttributeIndex
+Blendshapes = maya_blendshapes.Blendshapes
 Functions = maya_functions.Functions
 StandardMayaWindow = maya_gui.StandardMayaWindow
 Ask = maya_gui.Ask
