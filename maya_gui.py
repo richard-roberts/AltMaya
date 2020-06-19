@@ -60,7 +60,7 @@ class Ask:
         return folder
                 
     @classmethod
-    def choose_file_to_open(cls, parent, title, files_filter):
+    def choose_file_to_open(cls, parent, title, files_filter=""):
         dialog = QtWidgets.QFileDialog()
         filepath, selected_filter = dialog.getOpenFileName(parent, title, filter=files_filter)
         return filepath
