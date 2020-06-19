@@ -234,9 +234,12 @@ class Mesh:
         if verbose: e = time.time()
         if verbose: print("Triangles update took %2.2fs" % (e-s))
         
-    def update(self, verbose=False):
+    def update(self, triangles=True, verts=True, verbose=False):
         if verbose: s = time.time()
-        for t in self.triangles: t.update()
+        if triangles:
+            for t in self.triangles: t.update()
+        if verts:
+            for v in self.vertices: v.update()
         if verbose: e = time.time()
         if verbose: print("Triangles update took %2.2fs" % (e-s))
 
