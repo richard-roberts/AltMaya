@@ -5,8 +5,10 @@ import maya_functions
 import maya_gui 
 import maya_history 
 import maya_mesh 
+import maya_mouse
 import maya_object_index 
 import maya_plugins 
+import maya_raycast
 import maya_reporting 
 import maya_selection 
 import maya_shader
@@ -22,8 +24,10 @@ reload(maya_functions)
 reload(maya_gui)
 reload(maya_history)
 reload(maya_mesh)
+reload(maya_mouse)
 reload(maya_object_index)
 reload(maya_plugins)
+reload(maya_raycast)
 reload(maya_reporting)
 reload(maya_selection)
 reload(maya_shader)
@@ -45,8 +49,11 @@ Vertex = maya_mesh.Vertex
 Triangle = maya_mesh.Triangle
 Mesh = maya_mesh.Mesh
 VertexList = maya_mesh.VertexList
+MouseTracker = maya_mouse.MouseTracker
 ObjectIndex = maya_object_index.ObjectIndex
+Pointer = maya_mouse.Pointer
 Plugins = maya_plugins.Plugins
+RaycastTraceOnObject = maya_raycast.RaycastTraceOnObject
 Report = maya_reporting.Report
 Selection = maya_selection.Selection
 Shaders = maya_shader.Shaders
