@@ -1,6 +1,7 @@
 import maya_animation 
 import maya_attr_index 
 import maya_blendshapes 
+import maya_deformation
 import maya_functions 
 import maya_gui 
 import maya_history 
@@ -20,6 +21,7 @@ import maya_api
 reload(maya_animation)
 reload(maya_attr_index)
 reload(maya_blendshapes)
+reload(maya_deformation)
 reload(maya_functions)
 reload(maya_gui)
 reload(maya_history)
@@ -61,5 +63,6 @@ Timeline = maya_timeline.Timeline
 IdleCallback = maya_callbacks.IdleCallback
 TimelineChangeCallback = maya_callbacks.TimelineChangeCallback
 Types = maya_types.Types
+VisualizeDeformation = maya_deformation.VisualizeDeformation
 AttributeChangeCallback = maya_callbacks.AttributeChangeCallback
 API = maya_api.API
