@@ -1,11 +1,14 @@
 import time
 
-import maya
 import numpy
 
-from  maya_selection import Selection
+import maya.cmds as cmds
+import maya.api.OpenMaya as om
 
-query_space = maya.OpenMaya.MSpace.kObject
+import AltMaya as altmaya
+
+
+query_space = om.MSpace.kObject
 
 
 class Vertex:
@@ -21,31 +24,31 @@ class Vertex:
         else:
             self.setup_from_existing(existing)
            
-        self.starting_p = maya.OpenMaya.MPoint(self.p.x, self.p.y, self.p.z)
+        self.starting_p = om.MPoint(self.p)
+        self.delta_p = self.read_delta()
+        
+    def update(self):
+        self.p = self.m_mesh.getPoint(self.index, query_space)
         self.delta_p = self.read_delta()
         
     def setup_from_maya(self):
-        self.p = maya.OpenMaya.MPoint()
-        self.m_mesh.getPoint(self.index, self.p, query_space)
+        self.p = self.m_mesh.getPoint(self.index, query_space)
         
     def setup_from_existing(self, existing):
-        self.p = maya.OpenMaya.MPoint(existing.p.x, existing.p.y, existing.p.z)
+        self.p = om.MPoint(existing.p)
         
     def as_array(self):
         return numpy.array([
-            [self.p.x],
-            [self.p.y], 
-            [self.p.z]
+            [self.p[0]],
+            [self.p[1]], 
+            [self.p[2]]
         ])
         
     def reset(self):
         self.m_mesh.setPoint(self.index, self.starting_p, query_space)
         
     def set_by_xyz(self, x, y, z):
-        self.p.x = x
-        self.p.y = y
-        self.p.z = z
-        # m = maya.OpenMaya.MPoint(x, y, z)
+        self.p = om.MPoint(x, y, z)
         self.m_mesh.setPoint(self.index, self.p, query_space)
         
     def set_by_array(self, array):
@@ -56,19 +59,19 @@ class Vertex:
         
     def set_by_xyz_delta(self, x, y, z):
         self.set_by_xyz(
-            x + self.starting_p.x,
-            y + self.starting_p.y,
-            z + self.starting_p.z
+            x + self.starting_p[0],
+            y + self.starting_p[1],
+            z + self.starting_p[2]
         )
         
     def read_delta(self):
-        return maya.OpenMaya.MPoint(
-            self.starting_p.x - self.p.x,
-            self.starting_p.y - self.p.y, 
-            self.starting_p.z - self.p.z)
+        return om.MPoint(
+            self.starting_p[0] - self.p[0],
+            self.starting_p[1] - self.p[1], 
+            self.starting_p[2] - self.p[2])
         
     def __str__(self):
-        return "Vertex[%d,(%2.2f %2.2f %2.2f)]" % (self.index, self.p.x, self.p.y, self.p.z)
+        return "Vertex[%d,(%2.2f %2.2f %2.2f)]" % (self.index, self.p[0], self.p[1], self.p[2])
 
 
 class Triangle:
@@ -113,7 +116,7 @@ class Triangle:
         return "%s.f[%d]" % (self.parent.name, index)
         
     def select(self):
-        Selection.set([self.as_key()])
+        altmaya.Selection.set([self.as_key()])
 
 
 class Mesh:
@@ -122,14 +125,14 @@ class Mesh:
     def compile_face_adjaceny_map(cls, name):
         
         face_to_edge = {}
-        for f2e in maya.cmds.polyInfo(name, faceToEdge=True):
+        for f2e in cmds.polyInfo(name, faceToEdge=True):
             f, es = f2e.split(":")
             face = int(f.split("FACE")[1].strip())
             edges = [int(v.strip()) for v in es.split(" ") if v.strip() != ""]
             face_to_edge[face] = edges
             
         edge_to_face = {}
-        for e2f in maya.cmds.polyInfo(name, edgeToFace=True):
+        for e2f in cmds.polyInfo(name, edgeToFace=True):
             e, fs = e2f.split(":")
             edge = int(e.split("EDGE")[1].strip())
             faces = [int(v.strip()) for v in fs.split(" ") if v.strip() != ""]
@@ -154,23 +157,23 @@ class Mesh:
         return Mesh(self.name, existing=self, verbose=verbose)
         
     def setup_from_existing(self, name, existing, verbose):
-        self.name = alt_maya.Functions.duplicate(existing.name)
-        self.m_mesh = maya.OpenMaya.MFnMesh(alt_maya.ObjectIndex.get_path_from_name(self.name))
+        self.name = altmaya.Functions.duplicate(existing.name)
+        self.m_mesh = altmaya.API.get_function_set_from_name(self.name)
         self.triangle_adjaceny_map = existing.triangle_adjaceny_map
         
         if verbose: s = time.time()
         self.vertices = [
             Vertex(self, self.m_mesh, i, existing=existing.vertices[i])
-            for i in range(self.m_mesh.numVertices())
+            for i in range(self.m_mesh.numVertices)
         ]
         if verbose: e = time.time()
         if verbose: print("Verts init took %2.2fs" % (e-s))
         
         if verbose: s = time.time()
-        inds = maya.OpenMaya.MIntArray()
+        inds = om.MIntArray()
         self.triangles = []
-        for i in range(self.m_mesh.numPolygons()):
-            self.m_mesh.getPolygonVertices(i, inds)
+        for i in range(self.m_mesh.numPolygons):
+            inds = self.m_mesh.getPolygonVertices(i)
             if len(inds) != 3:
                 raise ValueError("Can only process triangle meshes for now, sorry")
             t = Triangle(
@@ -187,21 +190,20 @@ class Mesh:
         
     def setup_from_maya(self, name, verbose):        
         self.name = name
-        self.m_mesh = maya.OpenMaya.MFnMesh(alt_maya.ObjectIndex.get_path_from_name(name))
+        self.m_mesh = altmaya.API.get_function_set_from_name(self.name)
         
         if verbose: s = time.time()
         self.vertices = [
             Vertex(self, self.m_mesh, i)
-            for i in range(self.m_mesh.numVertices())
+            for i in range(self.m_mesh.numVertices)
         ]
         if verbose: e = time.time()
         if verbose: print("Verts init took %2.2fs" % (e-s))
         
         if verbose: s = time.time()
-        inds = maya.OpenMaya.MIntArray()
         self.triangles = []
-        for i in range(self.m_mesh.numPolygons()):
-            self.m_mesh.getPolygonVertices(i, inds)
+        for i in range(self.m_mesh.numPolygons):
+            inds = self.m_mesh.getPolygonVertices(i)
             if len(inds) != 3:
                 raise ValueError("Can only process triangle meshes for now, sorry")
             t = Triangle(
@@ -221,21 +223,11 @@ class Mesh:
         if verbose: print("Adj map init took %2.2fs" % (e-s))
         
     def get_nearest_valid_point_fast(self, x, y, z):
-        # maya.cmds.warning("Not using normal check for valid point (only distance)")
-        query = maya.OpenMaya.MPoint(x, y, z)
-        nearest = maya.OpenMaya.MPoint()
-        self.m_mesh.getClosestPoint(query, nearest, query_space)
-        return nearest.x, nearest.y, nearest.z
+        # cmds.warning("Not using normal check for valid point (only distance)")
+        query = om.MPoint(x, y, z)
+        n, ix = self.m_mesh.getClosestPoint(query, query_space)
+        return n, ix
         
-    def get_index_of_triangle_nearest_to_point(self, x, y, z):
-        query = maya.OpenMaya.MPoint(x, y, z)
-        p = maya.OpenMaya.MPoint()
-        ix = maya.OpenMaya.MScriptUtil().asIntPtr()
-        self.m_mesh.getClosestPoint(query, p, query_space, ix)
-        nearest_ix = maya.OpenMaya.MScriptUtil(ix).asInt()
-        # return self.triangles[nearest_ix]
-        return nearest_ix
-    
     def reset(self, verbose=False):
         if verbose: s = time.time()
         for v in self.vertices: v.reset()
@@ -253,10 +245,10 @@ class VertexList:
 
     def __init__(self, name):
         self.name = name
-        self.m_mesh = maya.OpenMaya.MFnMesh(alt_maya.ObjectIndex.get_path_from_name(name))
+        self.m_mesh = om.MFnMesh(altmaya.API.get_dag_path_from_name(name))
         self.vertices = [
             Vertex(self, self.m_mesh, i)
-            for i in range(self.m_mesh.numVertices())
+            for i in range(self.m_mesh.numVertices)
         ]
 
     def set_positions(self, xyzs):
