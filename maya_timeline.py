@@ -1,23 +1,23 @@
-import maya
+import maya.cmds as cmds
 
 
 class Timeline:
     
     @classmethod
     def get_current_frame(cls):
-        return maya.cmds.currentTime(query=True)
+        return cmds.currentTime(query=True)
         
     @classmethod
     def set_current_frame(cls, time):
-        return maya.cmds.currentTime(time)
+        return cmds.currentTime(time)
     
     @classmethod
     def get_start(cls):
-        return maya.cmds.playbackOptions(query=True, minTime=True)
+        return cmds.playbackOptions(query=True, minTime=True)
     
     @classmethod
     def get_end(cls):
-        return maya.cmds.playbackOptions(query=True, maxTime=True)
+        return cmds.playbackOptions(query=True, maxTime=True)
         
     @classmethod
     def list_of_frames(cls):
@@ -25,8 +25,8 @@ class Timeline:
     
     @classmethod
     def set_start(cls, frame):
-        return maya.cmds.playbackOptions(edit=True, minTime=frame)
+        cmds.playbackOptions(edit=True, minTime=frame)
     
     @classmethod
     def set_end(cls, frame):
-        return maya.cmds.playbackOptions(edit=True, maxTime=frame)
+        return cmds.playbackOptions(edit=True, maxTime=frame)
