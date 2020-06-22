@@ -25,8 +25,10 @@ class Timeline:
     
     @classmethod
     def set_start(cls, frame):
-        cmds.playbackOptions(edit=True, minTime=frame)
+        cmds.playbackOptions(animationStartTime=frame)
+        cmds.playbackOptions(minTime=frame)
     
     @classmethod
     def set_end(cls, frame):
-        return cmds.playbackOptions(edit=True, maxTime=frame)
+        cmds.playbackOptions(animationEndTime=frame)
+        cmds.playbackOptions(maxTime=frame)
