@@ -54,6 +54,14 @@ class Ask:
             raise ValueError("Response `%s` not understood" % (str(ret)))
     
     @classmethod
+    def choice(cls, parent, title, label, options):
+        ret, okay = QtWidgets.QInputDialog.getItem(parent, title, label, options)
+        if not okay:
+            return None
+        else:
+            return ret
+        
+    @classmethod
     def choose_folder(cls, parent, title):
         dialog = QtWidgets.QFileDialog()
         folder = dialog.getExistingDirectory(parent, title)
