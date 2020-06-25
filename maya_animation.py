@@ -1,6 +1,8 @@
 import maya
 
 from maya_selection import Selection
+from maya_reporting import Report
+
 
 class Animation:
 
