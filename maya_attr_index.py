@@ -38,7 +38,15 @@ class AttributeIndex:
         maya.cmds.setKeyframe(self.key, time=time, value=value)
                 
     def exists(self):
-        return maya.cmds.objExists(self.key)
+        if not maya.cmds.objExists(self.obj):
+            return False
+            
+        short_names = maya.cmds.listAttr(self.obj, shortNames=True, keyable=True)
+        long_names = maya.cmds.listAttr(self.obj, keyable=True)
+        if self.attr not in short_names and self.attr not in long_names:
+            return False
+            
+        return True
     
     def has_keyframes(self):
         ret = maya.cmds.keyframe(self.key, query=True)
