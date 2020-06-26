@@ -15,4 +15,4 @@ class Types:
             print(
                 "WARNING - not sure if %s is a mesh, but it has at least %d mesh nodes" % (name, n)
             )
-            return len(shapes) > 1
+            return len(shapes) >= 1
