@@ -46,3 +46,56 @@ class VisualizeDeformation:
         cmds.polyColorPerVertex(mesh_name, colorDisplayOption=True)
         fs = altmaya.API.get_function_set_from_name(mesh_name)
         fs.setVertexColors(colors, inds)
+    
+    def value_range_to_other(self, mesh_name):
+        o = altmaya.Mesh(mesh_name)
+        
+        map_x = {}
+        map_y = {}
+        map_z = {}
+        for i in range(len(o.vertices)):
+            ov = o.vertices[i]
+            mv = self.mesh.vertices[i]
+            map_x[ov.index] = ov.p[0] - mv.p[0] 
+            map_y[ov.index] = ov.p[1] - mv.p[1]
+            map_z[ov.index] = ov.p[2] - mv.p[2]
+        vec_x = np.array(map_x.values())
+        vec_y = np.array(map_y.values())
+        vec_z = np.array(map_z.values())
+        
+        min_v = min([min(vec_x), min(vec_y), min(vec_z)])
+        max_v = max([max(vec_x), max(vec_y), max(vec_z)])
+        return min_v, max_v
+        
+    def apply_to_other(self, mesh_name, scaling):
+        o = altmaya.Mesh(mesh_name)
+        
+        map_x = {}
+        map_y = {}
+        map_z = {}
+        for i in range(len(o.vertices)):
+            ov = o.vertices[i]
+            mv = self.mesh.vertices[i]
+            map_x[ov.index] = ov.p[0] - mv.p[0] 
+            map_y[ov.index] = ov.p[1] - mv.p[1]
+            map_z[ov.index] = ov.p[2] - mv.p[2]
+        vec_x = np.array(map_x.values())
+        vec_y = np.array(map_y.values())
+        vec_z = np.array(map_z.values())
+        
+        min_v = min([min(vec_x), min(vec_y), min(vec_z)])
+        max_v = max([max(vec_x), max(vec_y), max(vec_z)])
+        normed = max([abs(min_v), abs(max_v)])
+        inds = []
+        colors = []
+        for i in range(len(o.vertices)):
+            r = ((map_x[i] / normed) / 2 + 0.5)
+            g = ((map_y[i] / normed) / 2 + 0.5)
+            b = ((map_z[i] / normed) / 2 + 0.5)
+            c = om.MColor([r,g,b])
+            colors.append(c)
+            inds.append(i)
+
+        cmds.polyColorPerVertex(mesh_name, colorDisplayOption=True)
+        fs = altmaya.API.get_function_set_from_name(mesh_name)
+        fs.setVertexColors(colors, inds)
