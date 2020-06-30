@@ -5,6 +5,8 @@
 #    https://gist.github.com/fredrikaverpil/731e5d43c35d6372e19864243c6e0231
 #
 
+import numpy as np
+
 import maya.api.OpenMaya as om
 import maya.api.OpenMayaUI as omui
 
@@ -14,6 +16,9 @@ import AltMaya as altmaya
 class Ray:
     
     def __init__(self, point, param, face, tri, bary_1, bary_2):
+        self.point = np.array([
+            point[0], point[1], point[2]
+        ])
         self.face_index = face
     
     def hit_something(self):
