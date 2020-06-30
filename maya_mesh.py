@@ -109,6 +109,7 @@ class Triangle:
         self.r1qt = r.I * q.T    
         cp = numpy.cross(v2v1.T, v3v1.T)
         v4 = cp / numpy.linalg.norm(cp)
+        # TODO - test getting maya normal here?!"
         self.simplex = numpy.matrix(numpy.hstack([v2v1, v3v1, v4.T]))
         
     def as_key(self):
