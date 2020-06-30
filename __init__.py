@@ -55,6 +55,7 @@ MouseTracker = maya_mouse.MouseTracker
 ObjectIndex = maya_object_index.ObjectIndex
 Pointer = maya_mouse.Pointer
 Plugins = maya_plugins.Plugins
+Ray = maya_raycast.Ray
 RaycastTraceOnObject = maya_raycast.RaycastTraceOnObject
 Report = maya_reporting.Report
 Selection = maya_selection.Selection
