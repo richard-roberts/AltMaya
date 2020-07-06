@@ -228,7 +228,7 @@ class Mesh:
         for i in range(self.m_mesh.numPolygons):
             inds = self.m_mesh.getPolygonVertices(i)
             if len(inds) != 3:
-                raise ValueError("Can only process triangle meshes for now, sorry")
+                raise ValueError("Can only process triangle meshes for now, sorry (face %d has %d verts)" % (i, len(inds)))
             t = Triangle(
                 self,
                 self.m_mesh,
