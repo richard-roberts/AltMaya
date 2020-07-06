@@ -159,7 +159,7 @@ class Mesh:
         
     def setup_from_existing(self, name, existing, verbose):
         self.name = altmaya.Functions.duplicate(existing.name)
-        self.m_mesh = altmaya.API.get_function_set_from_name(self.name)
+        self.m_mesh = altmaya.API.get_mesh_function_set_from_name(self.name)
         self.triangle_adjaceny_map = existing.triangle_adjaceny_map
         
         if verbose: s = time.time()
@@ -191,7 +191,7 @@ class Mesh:
         
     def setup_from_maya(self, name, verbose):        
         self.name = name
-        self.m_mesh = altmaya.API.get_function_set_from_name(self.name)
+        self.m_mesh = altmaya.API.get_mesh_function_set_from_name(self.name)
         
         if verbose: s = time.time()
         self.vertices = [

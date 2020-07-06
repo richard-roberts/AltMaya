@@ -28,11 +28,11 @@ class API:
         )
         
     @classmethod
-    def get_function_set_from_dag_path(cls, dag_path):
+    def get_mesh_function_set_from_dag_path(cls, dag_path):
         return om.MFnMesh(dag_path)
         
     @classmethod
-    def get_function_set_from_name(cls, name):
-        return cls.get_function_set_from_dag_path(
+    def get_mesh_function_set_from_name(cls, name):
+        return cls.get_mesh_function_set_from_dag_path(
             cls.get_dag_path_from_name(name)
         )
