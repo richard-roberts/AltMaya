@@ -89,13 +89,35 @@ class Triangle:
             self.setup_from_existing(existing)
         
     def setup_from_existing(self, existing):
-        self.centroid = existing.centroid
-        self.edge_matrix = existing.edge_matrix
-        self.simplex = existing.simplex
-        self.r1qt = existing.r1qt
+        self.original_centroid = existing.centroid
+        self.original_edge_matrix = existing.edge_matrix
+        self.original_r1qt = existing.r1qt
+        self.original_simplex = existing.simplex
+
+        self.centroid = self.original_centroid
+        self.edge_matrix = self.original_edge_matrix
+        self.r1qt = self.original_r1qt
+        self.simplex = self.original_simplex
         
     def setup_from_maya(self):
-        self.update()
+        v1 = self.v1.as_array()
+        v2 = self.v2.as_array()
+        v3 = self.v3.as_array()
+        v2v1 = v2 - v1
+        v3v1 = v3 - v1
+        self.original_centroid = (v1 + v2 + v3) / 3
+        self.original_edge_matrix = numpy.matrix(numpy.hstack([v2v1, v3v1]))
+        q, r = numpy.linalg.qr(self.original_edge_matrix)
+        self.original_r1qt = r.I * q.T    
+        cp = numpy.cross(v2v1.T, v3v1.T)
+        v4 = cp / numpy.linalg.norm(cp)
+        # TODO - test getting maya normal here?!"
+        self.original_simplex = numpy.matrix(numpy.hstack([v2v1, v3v1, v4.T]))
+
+        self.centroid = self.original_centroid
+        self.edge_matrix = self.original_edge_matrix
+        self.r1qt = self.original_r1qt
+        self.simplex = self.original_simplex
         
     def update(self):
         v1 = self.v1.as_array()
