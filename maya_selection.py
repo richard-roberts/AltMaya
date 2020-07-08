@@ -1,6 +1,10 @@
 import maya
 
 
+maya.cmds.selectPref(trackSelectionOrder=True)
+print("Turned on tracking of selection order")
+
+
 class Selection:
     
     @classmethod
