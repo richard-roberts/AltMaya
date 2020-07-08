@@ -119,7 +119,11 @@ class Triangle:
         self.r1qt = self.original_r1qt
         self.simplex = self.original_simplex
         
-    def update(self):
+    def update(self, update_vertices=False):
+        if update_vertices:
+            self.v1.update()
+            self.v2.update()
+            self.v3.update()
         v1 = self.v1.as_array()
         v2 = self.v2.as_array()
         v3 = self.v3.as_array()
