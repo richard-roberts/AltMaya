@@ -76,9 +76,10 @@ class Vertex:
 
 class Triangle:
     
-    def __init__(self, parent, m_mesh, v1, v2, v3, existing=None):
+    def __init__(self, parent, m_mesh, index, v1, v2, v3, existing=None):
         self.parent = parent
         self.m_mesh = m_mesh
+        self.index = index
         self.v1 = v1
         self.v2 = v2
         self.v3 = v3
@@ -205,6 +206,7 @@ class Mesh:
             t = Triangle(
                 self,
                 self.m_mesh,
+                i,
                 self.vertices[inds[0]],
                 self.vertices[inds[1]],
                 self.vertices[inds[2]],
@@ -235,6 +237,7 @@ class Mesh:
             t = Triangle(
                 self,
                 self.m_mesh,
+                i,
                 self.vertices[inds[0]],
                 self.vertices[inds[1]],
                 self.vertices[inds[2]]
