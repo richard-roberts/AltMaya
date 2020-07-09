@@ -285,9 +285,16 @@ class Mesh:
         
     def reset(self, verbose=False):
         s = time.time()
-        for v in self.vertices: v.reset()
+        ps = []
+        for v in self.vertices:
+            ps.append(v.starting_p)
         e = time.time()
-        if verbose: print("reseting vertices took %2.2fs" % (e-s))
+        if verbose: print("gather reset positions took %2.2fs" % (e-s))
+
+        s = time.time()
+        self.m_mesh.setPoints(ps, query_space)
+        e = time.time()
+        if verbose: print("resetting vertices took %2.2fs" % (e-s))
         
     def update(self, triangles=True, verts=True, verbose=False):
         if verts:
@@ -304,14 +311,17 @@ class Mesh:
 
     def set_vertex_positions_by_matrix(self, matrix, verbose=False):
         s = time.time()
-        for (ix, row) in enumerate(matrix):
-            x = row[0,0]
-            y = row[0,1]
-            z = row[0,2]
-            self.vertices[ix].set_by_xyz(x, y, z)
+        ps = []
+        for row in matrix:
+            p = om.MPoint(row[0], row[1], row[2])
+            ps.append(p)
         e = time.time()
-        if verbose: print("setting vertex positions by matrix took %2.2fs" % (e-s))
+        if verbose: print("gather desired positions took %2.2fs" % (e-s))
 
+        s = time.time()
+        self.m_mesh.setPoints(ps, query_space)
+        e = time.time()
+        if verbose: print("setting vertices took %2.2fs" % (e-s))
 
 class VertexList:
 
