@@ -109,9 +109,8 @@ class Triangle:
         self.original_edge_matrix = numpy.matrix(numpy.hstack([v2v1, v3v1]))
         q, r = numpy.linalg.qr(self.original_edge_matrix)
         self.original_r1qt = r.I * q.T    
-        cp = numpy.cross(v2v1.T, v3v1.T)
+        cp = numpy.cross(v2v1.T, v3v1.T)  # TODO - maybe should use face normal here instead?
         v4 = cp / numpy.linalg.norm(cp)
-        # TODO - test getting maya normal here?!"
         self.original_simplex = numpy.matrix(numpy.hstack([v2v1, v3v1, v4.T]))
 
         self.centroid = self.original_centroid
@@ -256,19 +255,23 @@ class Mesh:
         return n, ix
         
     def reset(self, verbose=False):
-        if verbose: s = time.time()
+        s = time.time()
         for v in self.vertices: v.reset()
-        if verbose: e = time.time()
-        if verbose: print("Triangles update took %2.2fs" % (e-s))
+        e = time.time()
+        if verbose: print("reseting vertices took %2.2fs" % (e-s))
         
     def update(self, triangles=True, verts=True, verbose=False):
-        if verbose: s = time.time()
         if verts:
+            s = time.time()        
             for v in self.vertices: v.update()
+            e = time.time()
+            if verbose: print("updating verts took %2.2fs" % (e-s))
+
         if triangles:
+            s = time.time()
             for t in self.triangles: t.update()
-        if verbose: e = time.time()
-        if verbose: print("Triangles update took %2.2fs" % (e-s))
+            e = time.time()
+            if verbose: print("updating tris took %2.2fs" % (e-s))
 
 
 class VertexList:
