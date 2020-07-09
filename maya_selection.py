@@ -1,15 +1,11 @@
 import maya
 
 
-maya.cmds.selectPref(trackSelectionOrder=True)
-print("Turned on tracking of selection order")
-
-
 class Selection:
     
     @classmethod
     def get(cls):
-        return maya.cmds.ls(selection=True)
+        return maya.cmds.ls(orderedSelection=True, flatten=True)
     
     @classmethod
     def set(cls, *objs):
