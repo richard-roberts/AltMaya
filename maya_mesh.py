@@ -108,8 +108,18 @@ class Triangle:
         v3v1 = v3 - v1
         self.original_centroid = (v1 + v2 + v3) / 3
         self.original_edge_matrix = numpy.matrix(numpy.hstack([v2v1, v3v1]))
+        
         q, r = numpy.linalg.qr(self.original_edge_matrix)
-        self.original_r1qt = r.I * q.T    
+        try:
+            self.original_r1qt = r.I * q.T
+        except numpy.linalg.linalg.LinAlgError as e:
+            print(
+                "Failed to init R1QT for %s.f[%d] faking it as zeros (error is %s)" % (
+                    self.parent.name, self.index, str(e)
+                )
+            )
+            self.original_r1qt = numpy.matrix([[0,0,0], [0,0,0]])
+        
         cp = numpy.cross(v2v1.T, v3v1.T)  # TODO - maybe should use face normal here instead?
         v4 = cp / numpy.linalg.norm(cp)
         self.original_simplex = numpy.matrix(numpy.hstack([v2v1, v3v1, v4.T]))
@@ -131,8 +141,18 @@ class Triangle:
         v3v1 = v3 - v1
         self.centroid = (v1 + v2 + v3) / 3
         self.edge_matrix = numpy.matrix(numpy.hstack([v2v1, v3v1]))
+
         q, r = numpy.linalg.qr(self.edge_matrix)
-        self.r1qt = r.I * q.T    
+        try:
+            self.r1qt = r.I * q.T
+        except numpy.linalg.linalg.LinAlgError as e:
+            print(
+                "Failed to update R1QT for %s.f[%d], faking it as zeros (error is %s)" % (
+                    self.parent.name, self.parent.triangles.index(self), str(e)
+                )
+            )
+            self.r1qt = numpy.matrix([[0,0,0], [0,0,0]])
+
         cp = numpy.cross(v2v1.T, v3v1.T)
         v4 = cp / numpy.linalg.norm(cp)
         # TODO - test getting maya normal here?!"
