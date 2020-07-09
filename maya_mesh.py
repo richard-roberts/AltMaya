@@ -273,6 +273,16 @@ class Mesh:
             e = time.time()
             if verbose: print("updating tris took %2.2fs" % (e-s))
 
+    def set_vertex_positions_by_matrix(self, matrix, verbose=False):
+        s = time.time()
+        for (ix, row) in enumerate(matrix):
+            x = row[0,0]
+            y = row[0,1]
+            z = row[0,2]
+            self.vertices[ix].set_by_xyz(x, y, z)
+        e = time.time()
+        if verbose: print("setting vertex positions by matrix took %2.2fs" % (e-s))
+
 
 class VertexList:
 
