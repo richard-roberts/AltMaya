@@ -276,13 +276,11 @@ class Mesh:
         if verbose: print("Adj map init took %2.2fs" % (e-s))
         
     def get_index_of_face_nearest_point(self, x, y, z):
-        # cmds.warning("Not using normal check for valid point (only distance)")
         query = om.MPoint(x, y, z)
         _, ix = self.m_mesh.getClosestPoint(query, query_space)
         return ix
 
     def get_cooordinate_of_nearest_point(self, x, y, z):
-        # cmds.warning("Not using normal check for valid point (only distance)")
         query = om.MPoint(x, y, z)
         coordinate, _ = self.m_mesh.getClosestPoint(query, query_space)
         return coordinate
