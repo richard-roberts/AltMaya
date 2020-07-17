@@ -25,17 +25,21 @@ class Vertex:
             self.setup_from_existing(existing)
            
         self.starting_p = om.MPoint(self.p)
+        self.starting_n = om.MVector(self.n)
         self.delta_p = self.read_delta()
         
     def update(self):
         self.p = self.m_mesh.getPoint(self.index, query_space)
+        self.n = self.m_mesh.getVertexNormal(self.index, False, query_space).normalize() # False turns of angle-weighting and is faster
         self.delta_p = self.read_delta()
         
     def setup_from_maya(self):
         self.p = self.m_mesh.getPoint(self.index, query_space)
+        self.n = self.m_mesh.getVertexNormal(self.index, False, query_space).normalize()
         
     def setup_from_existing(self, existing):
         self.p = om.MPoint(existing.p)
+        self.n = om.MVector(existing.n)
         
     def as_array(self):
         return numpy.array([
