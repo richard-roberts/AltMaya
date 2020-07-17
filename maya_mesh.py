@@ -282,6 +282,11 @@ class Mesh:
         query = om.MPoint(x, y, z)
         coordinate, _ = self.m_mesh.getClosestPoint(query, query_space)
         return coordinate
+		
+    def get_coordinate_normal_and_face_of_nearest_point(self, x, y, z):
+		query = om.MPoint(x, y, z)
+		coord, normal, index = self.m_mesh.getClosestPointAndNormal(query, query_space)
+		return coord, normal, index
         
     def reset(self, verbose=False):
         s = time.time()
