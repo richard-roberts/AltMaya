@@ -178,6 +178,13 @@ class Mesh:
             vertices = [int(v.strip()) for v in vs.split(" ") if v.strip() != "" and v.strip() != "Hard"]
             self.edge_to_vertex[edge] = vertices 
 
+        self.face_to_vertex = {}
+        for f2v in cmds.polyInfo(self.name, faceToVertex=True):
+            f, vs = f2v.split(":")
+            face = int(f.split("FACE")[1].strip())
+            vertices = [int(v.strip()) for v in vs.split(" ") if v.strip() != "" and v.strip() != "Hard"]
+            self.face_to_vertex[face] = vertices 
+
         self.face_to_face = {}
         for curr_face in self.face_to_edge.keys():
             adj = []
