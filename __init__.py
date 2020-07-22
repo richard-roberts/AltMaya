@@ -50,7 +50,6 @@ History = maya_history.History
 Vertex = maya_mesh.Vertex
 Triangle = maya_mesh.Triangle
 Mesh = maya_mesh.Mesh
-VertexList = maya_mesh.VertexList
 MouseTracker = maya_mouse.MouseTracker
 ObjectIndex = maya_object_index.ObjectIndex
 Pointer = maya_mouse.Pointer
