@@ -40,6 +40,10 @@ class Vertex:
         
     def reset(self):
         self.m_mesh.setPoint(self.index, self.starting_p, query_space)
+    
+    def set_by_maya_point(self, point):
+        self.p = om.MPoint(point)
+        self.m_mesh.setPoint(self.index, self.p, query_space)
         
     def set_by_xyz(self, x, y, z):
         self.p = om.MPoint(x, y, z)
