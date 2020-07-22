@@ -14,15 +14,13 @@ query_space = om.MSpace.kObject
 class Vertex:
     
     
-    def __init__(self, parent, m_mesh, index, existing=None):
+    def __init__(self, parent, m_mesh, index):
         self.parent = parent
         self.m_mesh = m_mesh
         self.index = index
         
-        if existing is None:
-            self.setup_from_maya()
-        else:
-            self.setup_from_existing(existing)
+        self.p = self.m_mesh.getPoint(self.index, query_space)
+        self.n = self.m_mesh.getVertexNormal(self.index, False, query_space).normalize()
            
         self.starting_p = om.MPoint(self.p)
         self.starting_n = om.MVector(self.n)
@@ -31,15 +29,7 @@ class Vertex:
     def update(self):
         self.p = self.m_mesh.getPoint(self.index, query_space)
         self.n = self.m_mesh.getVertexNormal(self.index, False, query_space).normalize() # False turns of angle-weighting and is faster
-        self.delta_p = self.read_delta()
-        
-    def setup_from_maya(self):
-        self.p = self.m_mesh.getPoint(self.index, query_space)
-        self.n = self.m_mesh.getVertexNormal(self.index, False, query_space).normalize()
-        
-    def setup_from_existing(self, existing):
-        self.p = om.MPoint(existing.p)
-        self.n = om.MVector(existing.n)
+        self.delta_p = self.read_delta()        
         
     def as_array(self):
         return numpy.array([
@@ -80,7 +70,7 @@ class Vertex:
 
 class Triangle:
     
-    def __init__(self, parent, m_mesh, index, v1, v2, v3, existing=None):
+    def __init__(self, parent, m_mesh, index, v1, v2, v3):
         self.parent = parent
         self.m_mesh = m_mesh
         self.index = index
@@ -88,23 +78,6 @@ class Triangle:
         self.v2 = v2
         self.v3 = v3
         
-        if existing is None:
-            self.setup_from_maya()
-        else:
-            self.setup_from_existing(existing)
-        
-    def setup_from_existing(self, existing):
-        self.original_centroid = existing.centroid
-        self.original_edge_matrix = existing.edge_matrix
-        self.original_r1qt = existing.r1qt
-        self.original_simplex = existing.simplex
-
-        self.centroid = self.original_centroid
-        self.edge_matrix = self.original_edge_matrix
-        self.r1qt = self.original_r1qt
-        self.simplex = self.original_simplex
-        
-    def setup_from_maya(self):
         v1 = self.v1.as_array()
         v2 = self.v2.as_array()
         v3 = self.v3.as_array()
@@ -171,79 +144,55 @@ class Triangle:
 
 
 class Mesh:
-    
-    @classmethod
-    def compile_face_adjaceny_map(cls, name):
-        
-        face_to_edge = {}
-        for f2e in cmds.polyInfo(name, faceToEdge=True):
+
+    def __init__(self, name, verbose=False):
+        self.name = name
+
+        self.m_mesh = altmaya.API.get_mesh_function_set_from_name(self.name)
+
+        self.face_to_edge = {}
+        for f2e in cmds.polyInfo(self.name, faceToEdge=True):
             f, es = f2e.split(":")
             face = int(f.split("FACE")[1].strip())
             edges = [int(v.strip()) for v in es.split(" ") if v.strip() != ""]
-            face_to_edge[face] = edges
+            self.face_to_edge[face] = edges
             
-        edge_to_face = {}
-        for e2f in cmds.polyInfo(name, edgeToFace=True):
+        self.edge_to_face = {}
+        for e2f in cmds.polyInfo(self.name, edgeToFace=True):
             e, fs = e2f.split(":")
             edge = int(e.split("EDGE")[1].strip())
             faces = [int(v.strip()) for v in fs.split(" ") if v.strip() != ""]
-            edge_to_face[edge] = faces 
+            self.edge_to_face[edge] = faces 
+
+        self.vertex_to_edge = {}
+        for v2e in cmds.polyInfo(self.name, vertexToEdge=True):
+            v, es = v2e.split(":")
+            vertex = int(v.split("VERTEX")[1].strip())
+            edges = [int(v.strip()) for v in es.split(" ") if v.strip() != ""]
+            self.vertex_to_edge[vertex] = edges
             
-        adjaceny = {}
-        for f in face_to_edge.keys():
+        self.edge_to_vertex = {}
+        for e2v in cmds.polyInfo(self.name, edgeToVertex=True):
+            e, vs = e2v.split(":")
+            edge = int(e.split("EDGE")[1].strip())
+            vertices = [int(v.strip()) for v in vs.split(" ") if v.strip() != "" and v.strip() != "Hard"]
+            self.edge_to_vertex[edge] = vertices 
+
+        self.face_to_face = {}
+        for curr_face in self.face_to_edge.keys():
             adj = []
-            for e in face_to_edge[f]:
-                adj += [v for v in edge_to_face[e] if v != f]
-            adjaceny[f] = adj
-        
-        return adjaceny
-    
-    def __init__(self, name, existing=None, verbose=False):
-        if existing is None:
-            self.setup_from_maya(name, verbose)
-        else:
-            self.setup_from_existing(name, existing, verbose)
-    
-    def as_copy(self, verbose=False):
-        return Mesh(self.name, existing=self, verbose=verbose)
-        
-    def setup_from_existing(self, name, existing, verbose):
-        self.name = altmaya.Functions.duplicate(existing.name)
-        self.m_mesh = altmaya.API.get_mesh_function_set_from_name(self.name)
-        self.triangle_adjaceny_map = existing.triangle_adjaceny_map
-        
-        if verbose: s = time.time()
-        self.vertices = [
-            Vertex(self, self.m_mesh, i, existing=existing.vertices[i])
-            for i in range(self.m_mesh.numVertices)
-        ]
-        if verbose: e = time.time()
-        if verbose: print("Verts init took %2.2fs" % (e-s))
-        
-        if verbose: s = time.time()
-        inds = om.MIntArray()
-        self.triangles = []
-        for i in range(self.m_mesh.numPolygons):
-            inds = self.m_mesh.getPolygonVertices(i)
-            if len(inds) != 3:
-                raise ValueError("Can only process triangle meshes for now, sorry")
-            t = Triangle(
-                self,
-                self.m_mesh,
-                i,
-                self.vertices[inds[0]],
-                self.vertices[inds[1]],
-                self.vertices[inds[2]],
-                existing=existing.triangles[i]
-            )    
-            self.triangles.append(t)
-        if verbose: e = time.time()
-        if verbose: print("Triangles init took %2.2fs" % (e-s))
-        
-    def setup_from_maya(self, name, verbose):        
-        self.name = name
-        self.m_mesh = altmaya.API.get_mesh_function_set_from_name(self.name)
-        
+            for e in self.face_to_edge[curr_face]:
+                adj += [f for f in self.edge_to_face[e] if f != curr_face]
+            self.face_to_face[curr_face] = adj
+
+        self.edge_to_edge = {}
+        for curr_edge in self.edge_to_vertex.keys():
+            vertices = self.edge_to_vertex[curr_edge]
+            adj = []
+            for v in vertices:
+                adj += [e for e in self.vertex_to_edge[v] if e != curr_edge]
+            self.edge_to_edge[curr_edge] = adj
+
         if verbose: s = time.time()
         self.vertices = [
             Vertex(self, self.m_mesh, i)
@@ -268,13 +217,11 @@ class Mesh:
             )    
             self.triangles.append(t)
         if verbose: e = time.time()
-        if verbose: print("Triangles init took %2.2fs" % (e-s))        
-
-        if verbose: s = time.time()
-        self.triangle_adjaceny_map = self.compile_face_adjaceny_map(name)
-        if verbose: e = time.time()
-        if verbose: print("Adj map init took %2.2fs" % (e-s))
+        if verbose: print("Triangles init took %2.2fs" % (e-s))  
         
+    def as_copy(self, verbose=False):
+        return Mesh(self.name, existing=self, verbose=verbose)      
+
     def get_index_of_face_nearest_point(self, x, y, z):
         query = om.MPoint(x, y, z)
         _, ix = self.m_mesh.getClosestPoint(query, query_space)
