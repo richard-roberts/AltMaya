@@ -276,20 +276,3 @@ class Mesh:
         self.m_mesh.setPoints(ps, query_space)
         e = time.time()
         if verbose: print("setting vertices took %2.2fs" % (e-s))
-
-class VertexList:
-
-    def __init__(self, name):
-        self.name = name
-        self.m_mesh = om.MFnMesh(altmaya.API.get_dag_path_from_name(name))
-        self.vertices = [
-            Vertex(self, self.m_mesh, i)
-            for i in range(self.m_mesh.numVertices)
-        ]
-
-    def set_positions(self, xyzs):
-        for i in range(len(xyzs)):
-            x = xyzs[i][0]
-            y = xyzs[i][1]
-            z = xyzs[i][2]
-            self.vertices[i].set_by_xyz(x, y, z)
