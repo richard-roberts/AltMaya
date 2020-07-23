@@ -273,7 +273,25 @@ class Mesh:
             for t in self.triangles: t.update()
             e = time.time()
             if verbose: print("updating tris took %2.2fs" % (e-s))
-
+	
+    def select_vertices_given_indices(self, inds):
+		altmaya.Selection.set([
+			"%s.vtx[%d]" % (self.name, i)
+			for i in inds
+		])
+		
+    def select_edges_given_indices(self, inds):
+		altmaya.Selection.set([
+			"%s.e[%d]" % (self.name, i)
+			for i in inds
+		])
+		
+    def select_faces_given_indices(self, inds):
+		altmaya.Selection.set([
+			"%s.f[%d]" % (self.name, i)
+			for i in inds
+		])
+		
     def set_vertex_positions_by_matrix(self, matrix, verbose=False):
         s = time.time()
         ps = []
