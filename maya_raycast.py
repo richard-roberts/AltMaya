@@ -31,7 +31,7 @@ class RaycastTraceOnObject:
         self.obj = obj
         self.release_callback = release_callback
         
-        self.fn_set = altmaya.API.get_function_set_from_name(self.obj)
+        self.fn_set = altmaya.API.get_mesh_function_set_from_name(self.obj)
         self.tracker = altmaya.MouseTracker(
             "RaycastTraceOnObject_%s" % obj,
             press_callback=self.on_start,
