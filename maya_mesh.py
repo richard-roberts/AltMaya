@@ -353,3 +353,28 @@ class Mesh:
             if outer_iters > 100:
                 raise ValueError("Failed to terminate the outer loop search after 100 iters")
         return loops
+
+    def get_vertex_mapping_to_other(self, other):
+        m = {}
+        for v in self.vertices:
+            
+            # Get nearest face on org mesh
+            ix = other.get_index_of_face_nearest_point(v.p[0], v.p[1], v.p[2])
+            
+            # Get vertices of nearest face
+            v_ixs = other.face_to_vertex[ix]
+            
+            # Find closest vertex
+            nearest_dist = float('inf')
+            nearest_ix = -1
+            for ix in v_ixs:
+                ov = other.vertices[ix]
+                d = ov.p.distanceTo(v.p)
+                if d < nearest_dist:
+                    nearest_dist = d
+                    nearest_ix = ix
+            
+            # save it to the map
+            m[v.index] = nearest_ix
+
+        return m
