@@ -81,6 +81,7 @@ class Triangle:
         self.v1 = v1
         self.v2 = v2
         self.v3 = v3
+        self.n = self.m_mesh.getPolygonNormal(self.index, query_space).normalize()
         
         v1 = self.v1.as_array()
         v2 = self.v2.as_array()
