@@ -305,7 +305,39 @@ class Mesh:
         self.m_mesh.setPoints(ps, query_space)
         e = time.time()
         if verbose: print("setting vertices took %2.2fs" % (e-s))
-        
+    
+    def organize_list_of_edges_into_loop_order(self, boundary_edges):
+        boundary_edges_unvisited = [
+            ix for ix in boundary_edges
+        ]
+
+        starting_edge = boundary_edges_unvisited.pop()  
+        loop = [starting_edge]
+        curr_edge = starting_edge 
+        iters = 0
+
+        while True:
+            adj = self.edge_to_edge[curr_edge]
+            adj_boundary = [ix for ix in adj if ix in boundary_edges]
+            adj_boundary_allowed = [ix for ix in adj_boundary if ix in boundary_edges_unvisited]
+            if len(adj_boundary_allowed) == 0:
+                if starting_edge in adj_boundary:
+                    return loop
+                else:
+                    raise ValueError(
+                        "Loop not found, the last allowed edge (%d) is not adjacent to the first edge (%d)?" % 
+                        (curr_edge, starting_edge)
+                    )
+            else:
+                adj_boundary_first = adj_boundary_allowed[0]
+                boundary_edges_unvisited.remove(adj_boundary_first)
+                loop.append(adj_boundary_first)
+                curr_edge = adj_boundary_first
+
+            iters += 1
+            if iters > 10000:
+                raise ValueError("Exceed inner loop search limit of 10000 iters")
+
     def get_edges_of_holes_in_mesh(self):
         boundary_edges = [
             ix 
