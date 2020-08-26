@@ -37,6 +37,14 @@ class Vertex:
             [self.p[1]], 
             [self.p[2]]
         ])
+
+    def as_array_4(self):
+        return numpy.array([
+            [self.p[0]],
+            [self.p[1]], 
+            [self.p[2]],
+            1.0
+        ])        
         
     def reset(self):
         self.m_mesh.setPoint(self.index, self.starting_p, query_space)
