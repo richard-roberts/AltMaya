@@ -79,6 +79,12 @@ class Vertex:
     def __str__(self):
         return "Vertex[%d,(%2.2f %2.2f %2.2f)]" % (self.index, self.p[0], self.p[1], self.p[2])
 
+    def as_key(self):
+        return "%s.vtx[%d]" % (self.parent.name, self.index) 
+
+    def select(self):
+        altmaya.Selection.set([self.as_key()])
+
 
 class Triangle:
     
