@@ -51,3 +51,45 @@ class Selection:
                 raise ValueError("selection has less than three elements")
             else:
                 return sel[2]
+
+    @classmethod
+    def index_list_from_vertex_selection(cls):
+        return [
+            int(v.split("[")[1].split("]")[0])
+            for v in cls.get()
+        ]
+
+    @classmethod
+    def index_list_from_edge_selection(cls):
+        return [
+            int(v.split("[")[1].split("]")[0])
+            for v in cls.get()
+        ]
+
+    @classmethod
+    def index_list_from_face_selection(cls):
+        return [
+            int(v.split("[")[1].split("]")[0])
+            for v in cls.get()
+        ]
+
+    @classmethod
+    def set_from_inds_of_verts(cls, name, inds):
+        cls.set([
+            "%s.vtx[%d]" % (name, i)
+            for i in inds
+        ])
+
+    @classmethod
+    def set_from_inds_of_edges(cls, name, inds):
+        cls.set([
+            "%s.e[%d]" % (name, i)
+            for i in inds
+        ])
+
+    @classmethod
+    def set_from_inds_of_faces(cls, name, inds):
+        cls.set([
+            "%s.f[%d]" % (name, i)
+            for i in inds
+        ])
