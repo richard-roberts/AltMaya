@@ -32,8 +32,8 @@ class Animation:
         return len(cls.list_frames_that_have_keyframes(attribute_index)) != 0
         
     @classmethod
-    def list_keyable_attributes(cls, obj):
-        result = maya.cmds.listAttr(obj, shortNames=True, keyable=True)
+    def list_keyable_attributes(cls, obj, get_long_names=True):
+        result = maya.cmds.listAttr(obj, shortNames=(not get_long_names), keyable=True)
         if result is None:
             return []
         else:
