@@ -320,6 +320,20 @@ class Mesh:
         self.m_mesh.setPoints(ps, query_space)
         e = time.time()
         if verbose: print("setting vertices took %2.2fs" % (e-s))
+
+    def set_vertex_positions_by_2d_list(self, list_2d, verbose=False):
+        s = time.time()
+        ps = []
+        for row in list_2d:
+            p = om.MPoint(row[0], row[1], row[2])
+            ps.append(p)
+        e = time.time()
+        if verbose: print("gather desired positions took %2.2fs" % (e-s))
+
+        s = time.time()
+        self.m_mesh.setPoints(ps, query_space)
+        e = time.time()
+        if verbose: print("setting vertices took %2.2fs" % (e-s))
     
     def organize_list_of_edges_into_loop_order(self, boundary_edges):
         boundary_edges_unvisited = [
