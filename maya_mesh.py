@@ -253,6 +253,22 @@ class Mesh:
         _, ix = self.m_mesh.getClosestPoint(query, query_space)
         return ix
 
+    def get_index_of_vertex_nearest_point(self, x, y, z):
+        q = om.MPoint(x, y, z)
+        ix = self.get_index_of_face_nearest_point(x, y, z)
+        t = self.triangles[ix]
+        d_v1 = q.distanceTo(t.v1.p)
+        d_v2 = q.distanceTo(t.v2.p)
+        d_v3 = q.distanceTo(t.v3.p)
+        if d_v1 <= d_v2 and d_v1 <= d_v3:
+            return t.v1.index
+        elif d_v2 <= d_v1 and d_v2 <= d_v3:
+            return t.v2.index
+        elif d_v3 <= d_v1 and d_v3 <= d_v2:
+            return t.v3.index
+        else:
+            raise ValueError("Couldn't decide the closest point, this shouldn't happen?")
+
     def get_cooordinate_of_nearest_point(self, x, y, z):
         query = om.MPoint(x, y, z)
         coordinate, _ = self.m_mesh.getClosestPoint(query, query_space)
@@ -321,6 +337,12 @@ class Mesh:
         e = time.time()
         if verbose: print("setting vertices took %2.2fs" % (e-s))
 
+    def set_vertex_positions_by_mpoints_list(self, list_mpoint, verbose=False):
+        s = time.time()
+        self.m_mesh.setPoints(list_mpoint, query_space)
+        e = time.time()
+        if verbose: print("setting vertices took %2.2fs" % (e-s))
+   
     def set_vertex_positions_by_2d_list(self, list_2d, verbose=False):
         s = time.time()
         ps = []
@@ -330,11 +352,26 @@ class Mesh:
         e = time.time()
         if verbose: print("gather desired positions took %2.2fs" % (e-s))
 
-        s = time.time()
-        self.m_mesh.setPoints(ps, query_space)
-        e = time.time()
-        if verbose: print("setting vertices took %2.2fs" % (e-s))
-    
+        self.set_vertex_positions_by_mpoints_list(ps, verbose=verbose)
+
+    def deform_to_fit_other_mesh_with_same_topology(self, other, verbose=False):
+        a = self.name
+        b = other.name
+       
+        # Check vertex count matches
+        n_a = len(self.vertices)
+        n_b = len(other.vertices)
+        if n_a != n_b:
+            raise ValueError("Both %s and %s need to have the same number of verts (%s has %d, %s has %d)" % (a, b, a, n_a, b, n_b))
+        
+        # Check face count matches
+        n_a = len(self.triangles)
+        n_b = len(other.triangles)
+        if n_a != n_b:
+            raise ValueError("Both %s and %s need to have the same number of verts (%s has %d, %s has %d)" % (a, b, a, n_a, b, n_b))
+        
+        self.set_vertex_positions_by_mpoints_list([v.p for v in other.vertices], verbose=verbose)
+            
     def organize_list_of_edges_into_loop_order(self, boundary_edges):
         boundary_edges_unvisited = [
             ix for ix in boundary_edges
