@@ -4,7 +4,8 @@ import maya_blendshapes
 import maya_deformation
 import maya_functions 
 import maya_gui 
-import maya_history 
+import maya_history
+import maya_io 
 import maya_mesh 
 import maya_mouse
 import maya_object_index 
@@ -25,6 +26,7 @@ reload(maya_deformation)
 reload(maya_functions)
 reload(maya_gui)
 reload(maya_history)
+reload(maya_io)
 reload(maya_mesh)
 reload(maya_mouse)
 reload(maya_object_index)
@@ -47,6 +49,7 @@ StandardMayaWindow = maya_gui.StandardMayaWindow
 Ask = maya_gui.Ask
 Info = maya_gui.Info
 History = maya_history.History
+IO = maya_io.IO
 Vertex = maya_mesh.Vertex
 Triangle = maya_mesh.Triangle
 Mesh = maya_mesh.Mesh
