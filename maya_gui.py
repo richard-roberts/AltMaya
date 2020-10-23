@@ -89,11 +89,11 @@ class Ask:
 
     @classmethod
     def choose_file_to_save_json(cls, parent, title):
-        return cls.choose_file_to_save(parent, title, filter="JSON files (*.json);; All Files (*.*)")
+        return cls.choose_file_to_save(parent, title, files_filter="JSON files (*.json);; All Files (*.*)")
         
     @classmethod
     def choose_file_to_save_xml(cls, parent, title):
-        return cls.choose_file_to_save(parent, title, filter="XML files (*.xml);; All Files (*.*)")
+        return cls.choose_file_to_save(parent, title, files_filter="XML files (*.xml);; All Files (*.*)")
 
 
 class Info:
